@@ -1,0 +1,32 @@
+name: Verify NutriPeer desktop compilation
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - release
+
+jobs:
+  frontend-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+      - name: Install frontend dependencies
+        run: npm install
+      - name: Build frontend assets
+        run: npm run build:check
+      - name: Build native Tauri application binary
+        run: cargo build --release --features custom-protocol --manifest-path src-tauri/Cargo.toml

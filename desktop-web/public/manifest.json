@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "NutriPeer",
+  "short_name": "NutriPeer",
+  "description": "Diyetisyen klinik çalışma alanı",
+  "lang": "tr-TR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f3",
+  "theme_color": "#2b7556",
+  "icons": [
+    { "src": "NutriPeer-App-Icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
