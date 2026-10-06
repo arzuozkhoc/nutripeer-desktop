@@ -1,0 +1,45 @@
+name: Build free unsigned NutriPeer Intel Mac installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/preview-macos-intel.yml'
+      - 'src-tauri/**'
+      - 'src/**'
+      - 'desktop-web/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.*'
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    name: Build macOS Intel (unsigned test) DMG
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+      - name: Install frontend dependencies
+        run: npm install
+      - name: Build Intel Mac installer without signing
+        run: npm run tauri build -- --target x86_64-apple-darwin --bundles dmg --config src-tauri/tauri.preview.conf.json
+      - name: Upload unsigned installer for testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: NutriPeer-macOS-Intel-x64-unsigned-test
+          path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+          retention-days: 14
