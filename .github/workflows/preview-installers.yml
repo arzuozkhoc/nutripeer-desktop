@@ -1,0 +1,55 @@
+name: Build free unsigned NutriPeer installers
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/preview-installers.yml'
+      - 'src-tauri/**'
+      - 'src/**'
+      - 'desktop-web/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.*'
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    name: Build ${{ matrix.label }} installer
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Windows x64 (unsigned test)
+            os: windows-latest
+            bundle: nsis
+            output: src-tauri/target/release/bundle/nsis/*.exe
+          - label: macOS Apple silicon (unsigned test)
+            os: macos-latest
+            bundle: dmg
+            output: src-tauri/target/release/bundle/dmg/*.dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+      - name: Install frontend dependencies
+        run: npm install
+      - name: Build installer without updater-signing artifacts
+        run: npm run tauri build -- --bundles ${{ matrix.bundle }} --config src-tauri/tauri.preview.conf.json
+      - name: Upload unsigned installer for testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: NutriPeer-${{ matrix.label }}
+          path: ${{ matrix.output }}
+          if-no-files-found: error
+          retention-days: 14
