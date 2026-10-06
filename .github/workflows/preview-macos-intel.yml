@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   installer:
-    name: Build macOS Intel (unsigned test) DMG
+    name: Build macOS Intel (unsigned test) app
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
@@ -34,12 +34,14 @@ jobs:
           workspaces: ./src-tauri -> target
       - name: Install frontend dependencies
         run: npm install
-      - name: Build Intel Mac installer without signing
-        run: npm run tauri build -- --target x86_64-apple-darwin --bundles dmg --config src-tauri/tauri.preview.conf.json
-      - name: Upload unsigned installer for testing
+      - name: Build Intel Mac app bundle without signing
+        run: npm run tauri build -- --target x86_64-apple-darwin --bundles app --config src-tauri/tauri.preview.conf.json
+      - name: Archive app bundle preserving Mac metadata
+        run: ditto -c -k --sequesterRsrc --keepParent src-tauri/target/x86_64-apple-darwin/release/bundle/macos/NutriPeer.app NutriPeer-Intel.app.zip
+      - name: Upload unsigned app for testing
         uses: actions/upload-artifact@v4
         with:
           name: NutriPeer-macOS-Intel-x64-unsigned-test
-          path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
+          path: NutriPeer-Intel.app.zip
           if-no-files-found: error
           retention-days: 14
