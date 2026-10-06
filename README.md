@@ -47,7 +47,7 @@ Windows ve macOS imza/noter onayı hesap ve sertifika sahibinin kimlik bilgileri
 
 ## Mevcut doğrulama sınırı
 
-`.github/workflows/verify-desktop.yml` Windows ve macOS üzerinde başarılı oldu; gerçek Tauri ikilileri derlendi. `.github/workflows/preview-installers.yml` ücretsiz imzasız Windows NSIS ve Apple silicon Mac DMG deneme paketleri oluşturup Actions artifact olarak yükler. Bu paketler 14 gün saklanır. İmzasız oldukları için Windows SmartScreen ve macOS Gatekeeper uyarısı verebilir. Önizleme derlemesi Supabase bağlantısı olmadan çalıştığından hesap ve ortak kütüphane eşitlemesi etkin değildir; Tauri updater paketleri de bu test sürümünde oluşturulmaz.
+`.github/workflows/verify-desktop.yml` Windows ve macOS üzerinde başarılı oldu; gerçek Tauri ikilileri derlendi. `.github/workflows/preview-installers.yml` ücretsiz imzasız Windows NSIS ve Apple silicon Mac DMG paketlerini üretir; ikisi de Actions artifact olarak başarıyla yüklendi. `.github/workflows/preview-macos-intel.yml` Intel Mac uygulama paketini `.app.zip` olarak üretir; bu da başarıyla yüklendi. Actions paketleri 14 gün saklar. İmzasız oldukları için Windows SmartScreen ve macOS Gatekeeper uyarısı verebilir. Önizleme derlemesi Supabase bağlantısı olmadan çalıştığından hesap ve ortak kütüphane eşitlemesi etkin değildir; Tauri updater paketleri de bu test sürümünde oluşturulmaz.
 
 CI derlemesi uygulama penceresini elle açıp danışan iş akışlarını uçtan uca doğrulamaz. Canlı Supabase hesabı/kataloğu, imzalama anahtarları, Windows/macOS imza ve noterleme bilgileri henüz yapılandırılmadı. Bu nedenle mevcut dosyalar geliştirme/test önizlemesidir; imzalı ve üretim için onaylanmış yayın değildir.
 
